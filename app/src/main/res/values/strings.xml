@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">JobFinder</string>
+    <string name="title_Jobs">Jobs</string>
+    <string name="title_Profile">Profile</string>
+    <string name="OK">Ok</string>
+
+    <string name="location_permission_msg"> You did not allow location permission. This may occur deafualt location.\nBy allowing permissions you can get Jobs nearby you.</string>
+
+</resources>
