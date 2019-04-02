@@ -12,4 +12,17 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="btnStyleDark">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">20dp</item>
+        <item name="android:layout_marginTop">32dp</item>
+        <item name="android:layout_marginBottom">10dp</item>
+        <item name="android:layout_marginEnd">20dp</item>
+        <item name="android:layout_marginStart">20dp</item>
+        <item name="android:background">@drawable/bg_view_dark_round_corner</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textSize">20sp</item>
+    </style>
+
 </resources>
