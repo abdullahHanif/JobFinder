@@ -1,11 +1,12 @@
-<?xml version="1.0" encoding="utf-8"?>
-<layout>
+
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data class="SingleItemJobBind" />
 
     <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:card_view="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/rootCardViewLeaderBoard"
+        android:id="@+id/rootCardView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="5dp"
@@ -24,17 +25,24 @@
                 android:layout_width="100dp"
                 android:layout_height="0dp"
                 android:src="@mipmap/ic_launcher"
+                android:scaleType="fitXY"
                 card_view:layout_constraintBottom_toBottomOf="parent"
                 card_view:layout_constraintStart_toStartOf="parent"
                 card_view:layout_constraintTop_toTopOf="parent" />
 
             <TextView
+                android:layout_marginStart="4dp"
+                android:drawableStart="@mipmap/user"
+                android:drawablePadding="4dp"
                 android:id="@+id/txtJobTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
                 android:layout_marginTop="8dp"
                 android:text="Job Title"
-                android:textSize="18sp"
+                android:maxLength="30"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:textSize="14sp"
                 android:textStyle="bold"
                 card_view:layout_constraintEnd_toEndOf="parent"
                 card_view:layout_constraintHorizontal_bias="0.04"
@@ -42,37 +50,52 @@
                 card_view:layout_constraintTop_toTopOf="parent" />
 
             <TextView
+                android:layout_marginStart="4dp"
+                android:maxLines="1"
+                android:drawableStart="@mipmap/organization_50"
+                android:drawablePadding="4dp"
                 android:id="@+id/txtCompanyName"
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
+                android:ellipsize="end"
                 android:layout_marginTop="8dp"
                 android:text="Company Name"
-                android:textSize="14sp"
+                android:textSize="12sp"
                 card_view:layout_constraintEnd_toEndOf="parent"
                 card_view:layout_constraintHorizontal_bias="0.04"
                 card_view:layout_constraintStart_toEndOf="@id/imgCompany"
                 card_view:layout_constraintTop_toBottomOf="@id/txtJobTitle" />
 
             <TextView
+                android:layout_marginStart="4dp"
+                android:drawableStart="@mipmap/marker_50"
+                android:drawablePadding="4dp"
                 android:id="@+id/txtLocation"
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
+                android:maxLength="30"
                 android:layout_marginTop="8dp"
                 android:text="Location"
-                android:textSize="14sp"
+                android:maxLines="1"
+                android:textSize="12sp"
                 card_view:layout_constraintEnd_toEndOf="parent"
                 card_view:layout_constraintHorizontal_bias="0.04"
                 card_view:layout_constraintStart_toEndOf="@id/imgCompany"
                 card_view:layout_constraintTop_toBottomOf="@id/txtCompanyName" />
 
             <TextView
+                android:layout_marginStart="4dp"
+                android:drawableStart="@mipmap/planner_50"
+                android:drawablePadding="4dp"
                 android:id="@+id/txtPostDate"
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
+                android:maxLength="30"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
+                android:maxLines="2"
                 android:text="DD/MM//YYYY"
-                android:textSize="14sp"
+                android:textSize="12sp"
                 card_view:layout_constraintEnd_toEndOf="parent"
                 card_view:layout_constraintHorizontal_bias="0.04"
                 card_view:layout_constraintStart_toEndOf="@id/imgCompany"

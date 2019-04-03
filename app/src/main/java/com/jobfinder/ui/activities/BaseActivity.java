@@ -2,7 +2,6 @@ package com.jobfinder.ui.activities;
 
 import android.os.Bundle;
 import android.os.PersistableBundle;
-import android.view.Window;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;

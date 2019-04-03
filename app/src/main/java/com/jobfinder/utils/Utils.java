@@ -8,7 +8,11 @@ import android.view.View;
 import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
 
+import com.google.gson.Gson;
 import com.jobfinder.R;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class Utils {
 
@@ -53,6 +57,24 @@ public class Utils {
 
     }
 
+    public static class GsonUtils {
+
+        public static <T> JSONObject toJSON(T obj) throws JSONException {
+            Gson gson = new Gson();
+            return new JSONObject(gson.toJson(obj));
+        }
+
+        public static <T> T fromJSON(String json, Class<T> classOfT) {
+            Gson gson = new Gson();
+            return gson.fromJson(json, classOfT);
+        }
+
+        public static <T> T fromJSON(JSONObject json, Class<T> classOfT) {
+            Gson gson = new Gson();
+            return gson.fromJson(json.toString(), classOfT);
+        }
+    }
+
     public static void hideKeyboard(Activity activity) {
         InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
         //Find the currently focused view, so we can grab the correct window token from it.
@@ -63,4 +85,5 @@ public class Utils {
         }
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
+
 }

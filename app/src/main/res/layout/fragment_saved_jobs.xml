@@ -1,6 +1,7 @@
+
 <layout>
 
-    <data class="FragmentJobBind" />
+    <data class="FragmentSavedJobBind" />
 
     <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -46,88 +47,40 @@
                 android:layout_alignParentRight="true"
                 android:padding="15dp"
                 android:src="@mipmap/setting"
-                android:tint="@android:color/white" />
+                android:tint="@android:color/white"
+                />
 
         </RelativeLayout>
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/JobSearchView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            android:padding="8dp"
-            app:layout_constraintBottom_toTopOf="@id/pullToRefresh"
-            app:layout_constraintTop_toBottomOf="@id/header">
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:paddingStart="8dp"
-                android:paddingEnd="8dp">
-
-                <EditText
-                    android:id="@+id/etSearch"
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:drawableEnd="@mipmap/search_black_24dp"
-                    android:drawableTint="@color/colorPrimaryDark"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <TextView
-                    android:id="@+id/btnSearch"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="8dp"
-                    android:background="@drawable/bg_view_round_corner"
-                    android:paddingStart="8dp"
-                    android:paddingTop="4dp"
-                    android:paddingEnd="8dp"
-                    android:paddingBottom="4dp"
-                    android:text="Search"
-                    android:textColor="@color/colorPrimaryDark"
-                    android:textSize="16sp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="1.0"
-                    app:layout_constraintStart_toStartOf="parent"
-
-                    app:layout_constraintTop_toBottomOf="@id/etSearch" />
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-        </androidx.cardview.widget.CardView>
-
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:layout_marginTop="8dp"
             android:id="@+id/pullToRefresh"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_marginTop="8dp"
             android:visibility="visible"
-            app:layout_constraintTop_toBottomOf="@id/JobSearchView"
-            app:layout_constraintBottom_toBottomOf="parent" >
+            app:layout_constraintTop_toBottomOf="@id/header">
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/commonRecyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:clipToPadding="false"
-                android:paddingBottom="24dp"
-                android:scrollbars="none" />
+                android:paddingBottom="70dp"
+                android:scrollbars="none"
+                />
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
         <RelativeLayout
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/JobSearchView"
             android:id="@+id/EmptyRecyclerView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/JobSearchView">
+            android:visibility="gone">
 
             <ImageView
                 android:id="@+id/noDataFound"
@@ -138,14 +91,14 @@
                 android:src="@mipmap/ic_launcher" />
 
             <TextView
+                android:layout_below="@+id/noDataFound"
+                android:layout_marginTop="10dp"
                 android:id="@+id/noEventFound"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/noDataFound"
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
-                android:layout_marginTop="10dp"
-                android:text="Nothing to show"
+                android:text="No Jobs Saved..."
                 android:textSize="22sp" />
 
         </RelativeLayout>

@@ -2,14 +2,13 @@ package com.jobfinder.ui.activities;
 
 import android.os.Bundle;
 import android.view.MenuItem;
-import android.view.Window;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.jobfinder.R;
 import com.jobfinder.databinding.ActivityMainBind;
 import com.jobfinder.handler.FragmentHandler;
 import com.jobfinder.ui.fragment.Jobs;
-import com.jobfinder.utils.Utils;
+import com.jobfinder.ui.fragment.SavedJobs;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
@@ -27,8 +26,9 @@ public class HomeActivity extends BaseActivity {
                     //Open Fragment jobs
                     FragmentHandler.replaceFragment(HomeActivity.this, Jobs.newInstance(), R.id.container, false);
                     return true;
-                case R.id.navigation_profile:
-                    FragmentHandler.replaceFragment(HomeActivity.this, Jobs.newInstance(), R.id.container, false);
+                case R.id.navigation_saved_jobs:
+                    //Open Fragment Saved jobs
+                    FragmentHandler.replaceFragment(HomeActivity.this, SavedJobs.newInstance(), R.id.container, false);
                     return true;
 
             }
