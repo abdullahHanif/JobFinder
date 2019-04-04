@@ -131,6 +131,7 @@ public class Jobs extends BaseFragment implements JobsAdapter.JobsAdapterListene
                     }
 
                 } else {
+                    binding.pullToRefresh.setRefreshing(false);
                     binding.EmptyRecyclerView.setVisibility(View.VISIBLE);
                     binding.noEventFound.setText("Location not found, pull down to refresh.");
                     if (((HomeActivity) context).locationProvider != null) {
@@ -185,6 +186,7 @@ public class Jobs extends BaseFragment implements JobsAdapter.JobsAdapterListene
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
+                binding.pullToRefresh.setRefreshing(false);
                 binding.commonRecyclerView.setVisibility(View.GONE);
                 binding.EmptyRecyclerView.setVisibility(View.VISIBLE);
                 binding.noEventFound.setText("Some thing went wrong...");
