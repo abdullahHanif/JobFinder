@@ -12,7 +12,7 @@ public class SharedPrefManager {
     private static SharedPreferences preferences;
 
     static {
-        preferences = AppClass.context.getSharedPreferences(Constants.TAG, Context.MODE_PRIVATE);
+        preferences = AppClass.getContext().getSharedPreferences(Constants.TAG, Context.MODE_PRIVATE);
     }
 
     private static SharedPrefManager manager;

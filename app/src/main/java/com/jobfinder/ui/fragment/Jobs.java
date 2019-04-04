@@ -1,14 +1,18 @@
 package com.jobfinder.ui.fragment;
 
+import android.app.DownloadManager;
 import android.content.Intent;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RadioButton;
 import android.widget.Toast;
 
+import com.google.android.gms.common.api.Api;
 import com.jobfinder.R;
 import com.jobfinder.databinding.FragmentJobBind;
 import com.jobfinder.databinding.PopupSettingBind;
@@ -16,11 +20,15 @@ import com.jobfinder.model.Job;
 import com.jobfinder.model.JobPagination;
 import com.jobfinder.network.AppConfig;
 import com.jobfinder.network.NetworkCallHandler;
+import com.jobfinder.services.LocationProvider;
 import com.jobfinder.ui.activities.HomeActivity;
 import com.jobfinder.ui.adapter.JobsAdapter;
 import com.jobfinder.utils.Constants;
 import com.jobfinder.utils.SharedPrefManager;
 import com.jobfinder.utils.Utils;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import java.util.ArrayList;
 
@@ -41,12 +49,11 @@ public class Jobs extends BaseFragment implements JobsAdapter.JobsAdapterListene
     PopupSettingBind popupSettingBinding;
     AlertDialog dialog;
     JobPagination jobs;
-    int currentpage = 1;
-    int lastpage = 1;
-    private LinearLayoutManager linearLayoutManager;
+    LinearLayoutManager linearLayoutManager;
     JobsAdapter adapter;
     Double Lat, Lng;
-
+    private static Location mLocation;
+    int API_CHECKED_INDEX, SORT_CHECKED_INDEX;
 
     public static Jobs newInstance() {
         Jobs jobs = new Jobs();
@@ -59,7 +66,6 @@ public class Jobs extends BaseFragment implements JobsAdapter.JobsAdapterListene
 
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_jobs, container, false);
         popupSettingBinding = DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.popup_setting, null, false);
-
         setupComponents(binding.getRoot());
         return binding.getRoot();
     }
@@ -68,40 +74,65 @@ public class Jobs extends BaseFragment implements JobsAdapter.JobsAdapterListene
     void initializeComponents(View rootView) {
         binding.tolBarTitle.setText("Job Finder");
         setUpAdapter(new ArrayList<Job>());
-        prepareBaseURL();
+        prepareBaseURLAndFetchData("");
     }
 
-    //method to get data from server as per filters if default filter value is git hub and sort is latlng.
-    private void prepareBaseURL() {
-        String api_provider = SharedPrefManager.getInstance().getString(Constants.API_PROVIDER, "");
-        String sort_type = SharedPrefManager.getInstance().getString(Constants.SORT_TYPE, "");
+    //method to get data from server as per filters if default filter value is git hub and sort is date.
+    private void prepareBaseURLAndFetchData(String query) {
+        binding.commonRecyclerView.setVisibility(View.GONE);
+        binding.EmptyRecyclerView.setVisibility(View.GONE);
 
-        if (api_provider.equals("")) {
+        String local_api_provider = SharedPrefManager.getInstance().getString(Constants.API_PROVIDER, "");
+        String local_sort_type = SharedPrefManager.getInstance().getString(Constants.SORT_TYPE, "");
+
+
+        //setting default data provider to Github
+        if (local_api_provider.equalsIgnoreCase("") || local_api_provider.equalsIgnoreCase(Constants.GITHUB)) {
             SharedPrefManager.getInstance().putString(Constants.API_PROVIDER, Constants.GITHUB);
+            local_api_provider = Constants.GITHUB;
+            AppConfig.BASE_URL = AppConfig.GITHUB_BASE_URL;
+        } else if (local_api_provider.equalsIgnoreCase(Constants.SEARCH_GOV)) {
+            AppConfig.BASE_URL = AppConfig.SEARCH_GOV_BASE_URL;
+            local_api_provider = Constants.SEARCH_GOV;
         }
-
-        if (sort_type.equals("")) {
+        //setting default data provider to SortType to Date
+        if (local_sort_type.equalsIgnoreCase("")) {
             SharedPrefManager.getInstance().putString(Constants.SORT_TYPE, Constants.DATE);
+            local_sort_type = Constants.DATE;
         }
 
-        switch (api_provider) {
-            case Constants.GITHUB:
-                AppConfig.BASE_URL = "https://jobs.github.com/positions.json?lat=37.322997&long=-122.0321823";
-                break;
-            case Constants.SEARCH_GOV:
-                AppConfig.BASE_URL = "https://jobs.search.gov/jobs/search.json?query=nursing+jobs/";
-                break;
-        }
-
-        switch (sort_type) {
+        switch (local_sort_type) {
             case Constants.LOCATION:
-                if (((HomeActivity) context).mLocation != null) {
-                    Lat = ((HomeActivity) context).mLocation.getLatitude();
-                    Lng = ((HomeActivity) context).mLocation.getLongitude();
+                //becasue fragment might be destroyed while navigation so check if activity's location has value...
+                if (mLocation == null && ((HomeActivity) context).mLocation != null) {
+                    mLocation = ((HomeActivity) context).mLocation;
+                }
+
+                if (mLocation != null) {
+                    Lat = mLocation.getLatitude();
+                    Lng = mLocation.getLongitude();
+
+                    //calling github url with query and without any query
+                    if (!query.equalsIgnoreCase("") && local_api_provider.equalsIgnoreCase(Constants.GITHUB)) {
+                        getJobs(AppConfig.BASE_URL + "?description=" + query + "&lat=" + Lat + "&long=" + Lng);
+                    }
+                    //Calling if search query is empty loading all positions nearby me
+                    else if (query.equalsIgnoreCase("") && local_api_provider.equalsIgnoreCase(Constants.GITHUB)) {
+                        getJobs(AppConfig.BASE_URL + "?lat=" + Lat + "&long=" + Lng);
+                    }
+
+                    //calling Search.gov url with query and without any query
+                    if (!query.equalsIgnoreCase("") && local_api_provider.equalsIgnoreCase(Constants.SEARCH_GOV)) {
+                        getJobs(AppConfig.BASE_URL + "?query=" + query + "&lat_lon=" + Lat + "," + Lng);
+                    }
+                    //Calling if search query is empty loading all positions nearby me
+                    else if (query.equalsIgnoreCase("") && local_api_provider.equalsIgnoreCase(Constants.SEARCH_GOV)) {
+                        getJobs(AppConfig.BASE_URL + "?lat_lon=" + Lat + "," + Lng);
+                    }
+
                 } else {
-                    binding.commonRecyclerView.setVisibility(View.GONE);
                     binding.EmptyRecyclerView.setVisibility(View.VISIBLE);
-                    binding.noEventFound.setText("Please Enable Location to see Jobs...");
+                    binding.noEventFound.setText("Location not found, pull down to refresh.");
                     if (((HomeActivity) context).locationProvider != null) {
                         ((HomeActivity) context).locationProvider.checkPermissionsAndStartScreenSetup();
                     }
@@ -109,10 +140,21 @@ public class Jobs extends BaseFragment implements JobsAdapter.JobsAdapterListene
 
                 break;
             case Constants.DATE:
+                //calling github url with query
+                if (!query.equalsIgnoreCase("") && local_api_provider.equalsIgnoreCase(Constants.GITHUB)) {
+                    getJobs(AppConfig.BASE_URL + "?description=" + query);
+                }
+                //calling Search.gov url with query
+                else if (!query.equalsIgnoreCase("") && local_api_provider.equalsIgnoreCase(Constants.SEARCH_GOV)) {
+                    getJobs(AppConfig.BASE_URL + "?query=" + query);
+                }
+                //Calling all available positions
+                else {
+                    getJobs(AppConfig.BASE_URL);
+                }
+
                 break;
         }
-
-        getJobs(AppConfig.BASE_URL);
     }
 
     private void getJobs(String URL) {
@@ -121,17 +163,19 @@ public class Jobs extends BaseFragment implements JobsAdapter.JobsAdapterListene
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 try {
+                    binding.commonRecyclerView.setVisibility(View.GONE);
+                    binding.EmptyRecyclerView.setVisibility(View.GONE);
                     //adding one data key in root of API response as array list parsing error occurs without data key in root
                     String responsee = "{\"data\":" + response.body().string() + "}";
                     jobs = Utils.GsonUtils.fromJSON(responsee, JobPagination.class);
                     binding.pullToRefresh.setRefreshing(false);
 
                     if (jobs != null && !jobs.getJobsList().isEmpty()) {
+                        binding.commonRecyclerView.setVisibility(View.VISIBLE);
                         setUpAdapter(jobs.getJobsList());
                     } else {
-                        binding.commonRecyclerView.setVisibility(View.GONE);
                         binding.EmptyRecyclerView.setVisibility(View.VISIBLE);
-                        binding.noEventFound.setText("No Data Found...");
+                        binding.noEventFound.setText("Sorry, no jobs found...");
                     }
 
                 } catch (Exception e) {
@@ -141,7 +185,9 @@ public class Jobs extends BaseFragment implements JobsAdapter.JobsAdapterListene
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-
+                binding.commonRecyclerView.setVisibility(View.GONE);
+                binding.EmptyRecyclerView.setVisibility(View.VISIBLE);
+                binding.noEventFound.setText("Some thing went wrong...");
             }
         });
     }
@@ -155,6 +201,19 @@ public class Jobs extends BaseFragment implements JobsAdapter.JobsAdapterListene
                 if (popupSettingBinding.getRoot().getParent() != null) {
                     ((ViewGroup) popupSettingBinding.getRoot().getParent()).removeView(popupSettingBinding.getRoot());
                 }
+                //setting select radio button values.
+                if (SharedPrefManager.getInstance().getString(Constants.API_PROVIDER, "").equalsIgnoreCase(Constants.SEARCH_GOV)) {
+                    popupSettingBinding.rdoGroupAPIProvider.check(R.id.rdoBtnSearchGov);
+                } else {
+                    popupSettingBinding.rdoGroupAPIProvider.check(R.id.rdoBtnGithub);
+                }
+
+                if (SharedPrefManager.getInstance().getString(Constants.SORT_TYPE, "").equalsIgnoreCase(Constants.LOCATION)) {
+                    popupSettingBinding.rdoGroupSort.check(R.id.rdoBtnLocation);
+                } else {
+                    popupSettingBinding.rdoGroupSort.check(R.id.rdoBtnDate);
+                }
+
                 dialog = new AlertDialog.Builder(context)
                         .setView(popupSettingBinding.getRoot())
                         .setCancelable(false)
@@ -175,6 +234,7 @@ public class Jobs extends BaseFragment implements JobsAdapter.JobsAdapterListene
                     switch (popupSettingBinding.rdoGroupAPIProvider.getCheckedRadioButtonId()) {
                         case R.id.rdoBtnGithub:
                             SharedPrefManager.getInstance().putString(Constants.API_PROVIDER, Constants.GITHUB);
+
                             break;
                         case R.id.rdoBtnSearchGov:
                             SharedPrefManager.getInstance().putString(Constants.API_PROVIDER, Constants.SEARCH_GOV);
@@ -191,8 +251,10 @@ public class Jobs extends BaseFragment implements JobsAdapter.JobsAdapterListene
                             break;
                     }
                     Toast.makeText(context, "Settings Saved.", Toast.LENGTH_SHORT).show();
-
-                    prepareBaseURL();
+                    //reset of search data query
+                    binding.etSearch.setText("");
+                    Utils.hideKeyboard(context);
+                    prepareBaseURLAndFetchData("");
 
                     if (dialog != null && dialog.isShowing()) {
                         dialog.dismiss();
@@ -213,7 +275,17 @@ public class Jobs extends BaseFragment implements JobsAdapter.JobsAdapterListene
         binding.pullToRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                prepareBaseURL();
+                prepareBaseURLAndFetchData("");
+            }
+        });
+
+        binding.btnSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String query = binding.etSearch.getText().toString();
+                Utils.hideKeyboard(context);
+                prepareBaseURLAndFetchData(query);
+
             }
         });
 
@@ -236,5 +308,21 @@ public class Jobs extends BaseFragment implements JobsAdapter.JobsAdapterListene
                 startActivity(i);
                 break;
         }
+    }
+
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Subscribe
+    public void onEvent_Location(Location location) {
+        mLocation = location;
     }
 }

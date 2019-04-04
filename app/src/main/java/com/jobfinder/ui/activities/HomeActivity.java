@@ -25,7 +25,7 @@ import org.greenrobot.eventbus.Subscribe;
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 
-public class HomeActivity extends BaseActivity {
+public class HomeActivity extends BaseActivity implements SavedJobs.SavedJobsListener {
     ActivityMainBind binding;
     public Location mLocation;
     public LocationProvider locationProvider;
@@ -41,7 +41,7 @@ public class HomeActivity extends BaseActivity {
                     return true;
                 case R.id.navigation_saved_jobs:
                     //Open Fragment Saved jobs
-                    FragmentHandler.replaceFragment(HomeActivity.this, SavedJobs.newInstance(), R.id.container, false);
+                    FragmentHandler.replaceFragment(HomeActivity.this, SavedJobs.newInstance(), R.id.container, true);
                     return true;
 
             }
@@ -106,7 +106,7 @@ public class HomeActivity extends BaseActivity {
 
                 case Activity.RESULT_CANCELED:
                     //User chose not to make required location settings changes.
-                    Log.d(Constants.TAG, "HomeActivity Location not enabled");
+                    Log.d(Constants.TAG, "Location not enabled");
                     break;
             }
         }
@@ -115,5 +115,15 @@ public class HomeActivity extends BaseActivity {
     @Subscribe
     public void onEvent_Location(Location location) {
         mLocation = location;
+    }
+
+    @Override
+    public void SavedJobsListen(int option) {
+        switch (option) {
+            case Constants.Back:
+                binding.navigation.getMenu().getItem(0).setChecked(true);
+                popStack();
+                break;
+        }
     }
 }

@@ -39,8 +39,8 @@ public class Splash extends BaseFragment {
     }
 
     private void animateSplashLogo() {
-        binding.splashLogo.animate().scaleX(0).scaleY(0).setDuration(700).setStartDelay(2000).withLayer().start();
-        final int[] timerWait = new int[1];
+        binding.splashLogo.animate().scaleX(0).scaleY(0).setDuration(700).setStartDelay(2000).withLayer().start();final int[] timerWait = new int[1];
+
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {

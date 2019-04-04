@@ -2,11 +2,9 @@ package com.jobfinder.ui.fragment;
 
 
 import android.os.Bundle;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.EditText;
 
+import com.jobfinder.AppClass;
 import com.jobfinder.ui.activities.BaseActivity;
 import com.jobfinder.utils.Utils;
 
@@ -28,6 +26,7 @@ public abstract class BaseFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.context = getActivity();
+        Utils.hideKeyboard(AppClass.getActivity());
     }
 
     //showing progress dialog

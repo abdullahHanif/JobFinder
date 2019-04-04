@@ -6,8 +6,8 @@ import android.content.Context;
 import android.os.Bundle;
 
 public class AppClass extends Application {
-    public static Context context;
-    Activity activity;
+    private static AppClass context;
+    private static Activity activity;
 
     @Override
     public void onCreate() {
@@ -16,12 +16,16 @@ public class AppClass extends Application {
         registerLifeCycleActivity();
     }
 
+    public static AppClass getContext() {
+        return context;
+    }
+
     private void registerLifeCycleActivity() {
         registerActivityLifecycleCallbacks(new ActivityLifecycleCallbacks() {
 
             @Override
             public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
-              AppClass.this.activity = activity;
+              AppClass.activity = activity;
             }
 
             @Override
@@ -54,5 +58,9 @@ public class AppClass extends Application {
 
             }
         });
+    }
+
+    public static Activity getActivity(){
+        return activity;
     }
 }

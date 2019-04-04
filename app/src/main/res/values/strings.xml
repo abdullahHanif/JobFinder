@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">JobFinder</string>
+    <string name="app_name">Job Finder</string>
     <string name="title_Jobs">Jobs</string>
     <string name="title_Profile">Profile</string>
     <string name="title_Saved_Jobs">Saved Jobs</string>

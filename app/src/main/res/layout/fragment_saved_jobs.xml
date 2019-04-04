@@ -19,12 +19,11 @@
                 android:id="@+id/tolBarTitle"
                 android:layout_width="300dp"
                 android:layout_height="match_parent"
-                android:layout_centerHorizontal="true"
                 android:ellipsize="end"
                 android:gravity="center"
                 android:maxLength="30"
                 android:maxLines="1"
-                android:text="Header Text"
+                android:text="Saved Jobs"
                 android:textAlignment="center"
                 android:textColor="@android:color/white"
                 android:textSize="18sp"
@@ -37,8 +36,9 @@
                 android:layout_alignParentTop="true"
                 android:layout_marginTop="0dp"
                 android:padding="18dp"
-                android:src="@android:drawable/arrow_up_float"
-                android:visibility="gone" />
+                android:src="@mipmap/back"
+                android:tint="@android:color/white"
+                android:visibility="visible" />
 
             <ImageView
                 android:id="@+id/settings"
@@ -48,6 +48,7 @@
                 android:padding="15dp"
                 android:src="@mipmap/setting"
                 android:tint="@android:color/white"
+                android:visibility="gone"
                 />
 
         </RelativeLayout>
@@ -57,7 +58,7 @@
             android:id="@+id/pullToRefresh"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:visibility="visible"
+            android:visibility="gone"
             app:layout_constraintTop_toBottomOf="@id/header">
 
             <androidx.recyclerview.widget.RecyclerView
@@ -74,13 +75,13 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/JobSearchView"
+            app:layout_constraintTop_toBottomOf="@id/header"
             android:id="@+id/EmptyRecyclerView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
-            android:visibility="gone">
+            android:visibility="visible">
 
             <ImageView
                 android:id="@+id/noDataFound"
