@@ -34,15 +34,17 @@ import com.jobfinder.BuildConfig;
 import com.jobfinder.R;
 import com.jobfinder.utils.Constants;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.util.List;
 
 import androidx.annotation.NonNull;
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
 
-public class MMVLocationProvider implements EasyPermissions.PermissionCallbacks {
+public class LocationProvider implements EasyPermissions.PermissionCallbacks {
 
-    private static final String TAG = MMVLocationProvider.class.getSimpleName();
+    private static final String TAG = LocationProvider.class.getSimpleName();
 
     /**
      * Code used in requesting runtime permissions.
@@ -111,7 +113,7 @@ public class MMVLocationProvider implements EasyPermissions.PermissionCallbacks 
     private Activity context;
     private ProgressDialog progressDialog;
 
-    public MMVLocationProvider(Activity context) {
+    public LocationProvider(Activity context) {
         this.context = context;
         mRequestingLocationUpdates = false;
 
@@ -164,7 +166,7 @@ public class MMVLocationProvider implements EasyPermissions.PermissionCallbacks 
             public void onLocationResult(LocationResult locationResult) {
                 super.onLocationResult(locationResult);
                 progressDialog.dismiss();
-                //GlobalBus.getBus().post(locationResult.getLastLocation());
+                EventBus.getDefault().post(locationResult.getLastLocation());
                 mCurrentLocation = locationResult.getLastLocation();
             }
         };
@@ -228,7 +230,7 @@ public class MMVLocationProvider implements EasyPermissions.PermissionCallbacks 
 
     private void showDialog() {
         progressDialog = new ProgressDialog(context);
-        progressDialog.setMessage("Please Wait");
+        progressDialog.setMessage("Fetching Location...");
         progressDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         progressDialog.setProgressStyle(R.style.CustomDialogStyle);
         progressDialog.setCancelable(false);

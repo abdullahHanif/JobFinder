@@ -24,7 +24,7 @@ class ApiClient {
             //initializing retrofit
             retrofit = new Retrofit.Builder()
                     //setting base url
-                    .baseUrl(BASE_URL)
+                     .baseUrl(AppConfig.URL)
                     //converting json to gson
                     .addConverterFactory(GsonConverterFactory.create())
                     //setting timeout to 30s
@@ -48,7 +48,6 @@ class ApiClient {
 interface ApiInterface {
 
     //Creating GET request
-
     @GET
     Call<ResponseBody> get(@Url String endpoint);
 }

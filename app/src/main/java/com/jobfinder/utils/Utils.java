@@ -73,6 +73,9 @@ public class Utils {
             Gson gson = new Gson();
             return gson.fromJson(json.toString(), classOfT);
         }
+
+        /*JsonElement yourJson = mapping.get("servers");
+        Type listType = new TypeToken<List<String>>() {}.getType();*/
     }
 
     public static void hideKeyboard(Activity activity) {

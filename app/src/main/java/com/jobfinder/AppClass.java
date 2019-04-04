@@ -6,7 +6,7 @@ import android.content.Context;
 import android.os.Bundle;
 
 public class AppClass extends Application {
-    Context context;
+    public static Context context;
     Activity activity;
 
     @Override

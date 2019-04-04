@@ -20,6 +20,7 @@
 
 
         <TextView
+            android:textColor="@color/colorAccent"
             android:id="@+id/txtAPIbl"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -62,6 +63,7 @@
         </RadioGroup>
 
         <TextView
+            android:textColor="@color/colorAccent"
             android:id="@+id/txtSortlbl"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

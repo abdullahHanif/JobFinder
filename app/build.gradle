@@ -40,6 +40,9 @@ dependencies {
     //retrofit
     implementation 'com.squareup.retrofit2:retrofit:2.5.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.5.0'
+
+    //eventbus
+    implementation "org.greenrobot:eventbus:3.1.1"
     //test lib
     testImplementation 'junit:junit:4.12'
 
