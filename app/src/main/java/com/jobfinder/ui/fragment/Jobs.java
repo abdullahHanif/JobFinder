@@ -86,7 +86,7 @@ public class Jobs extends BaseFragment implements JobsAdapter.JobsAdapterListene
 
         switch (api_provider) {
             case Constants.GITHUB:
-                AppConfig.BASE_URL = "https://jobs.github.com/positions.json?description=python&location=new+york/";
+                AppConfig.BASE_URL = "https://jobs.github.com/positions.json?lat=37.322997&long=-122.0321823";
                 break;
             case Constants.SEARCH_GOV:
                 AppConfig.BASE_URL = "https://jobs.search.gov/jobs/search.json?query=nursing+jobs/";
@@ -99,10 +99,9 @@ public class Jobs extends BaseFragment implements JobsAdapter.JobsAdapterListene
                     Lat = ((HomeActivity) context).mLocation.getLatitude();
                     Lng = ((HomeActivity) context).mLocation.getLongitude();
                 } else {
-                    binding.pullToRefresh.setRefreshing(false);
                     binding.commonRecyclerView.setVisibility(View.GONE);
                     binding.EmptyRecyclerView.setVisibility(View.VISIBLE);
-                    binding.noEventFound.setText("Please Enable Locaiton to see Jobs...");
+                    binding.noEventFound.setText("Please Enable Location to see Jobs...");
                     if (((HomeActivity) context).locationProvider != null) {
                         ((HomeActivity) context).locationProvider.checkPermissionsAndStartScreenSetup();
                     }
@@ -227,7 +226,6 @@ public class Jobs extends BaseFragment implements JobsAdapter.JobsAdapterListene
         adapter = new JobsAdapter(context, arrayList, this);
         binding.commonRecyclerView.setAdapter(adapter);
     }
-
 
     @Override
     public void JobsAdapterListen(int option, Job job) {

@@ -4,8 +4,10 @@ import android.app.Activity;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.jobfinder.R;
@@ -14,6 +16,7 @@ import com.jobfinder.handler.FragmentHandler;
 import com.jobfinder.services.LocationProvider;
 import com.jobfinder.ui.fragment.Jobs;
 import com.jobfinder.ui.fragment.SavedJobs;
+import com.jobfinder.ui.fragment.Splash;
 import com.jobfinder.utils.Constants;
 
 import org.greenrobot.eventbus.EventBus;
@@ -51,32 +54,42 @@ public class HomeActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+        initializeComponents();
 
-        BottomNavigationView navigation = findViewById(R.id.navigation);
-        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+        FragmentHandler.replaceFragment(this, Splash.newInstance(), R.id.container, false);
+    }
 
-        FragmentHandler.replaceFragment(this, Jobs.newInstance(), R.id.container, false);
-
+    void initializeComponents() {
+        binding.navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        locationProvider = new LocationProvider(this);
-        EventBus.getDefault().register(this);
+        //delayed because of splash
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                locationProvider = new LocationProvider(HomeActivity.this);
+                binding.navigation.setVisibility(View.VISIBLE);
+            }
+        }, 3050);
 
+        EventBus.getDefault().register(this);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
+        //if activity is killed as soon as it was created...
         EventBus.getDefault().unregister(this);
-    }
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                locationProvider.stopLocationUpdates();
+            }
+        }, 3100);
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        locationProvider.stopLocationUpdates();
     }
 
     @Override

@@ -25,7 +25,7 @@ public class Utils {
                 if (context != null && !context.isFinishing() && !isShowing) {
 
                     progressDialog = new ProgressDialog(context);
-                    progressDialog.setMessage("Please Wait");
+                    progressDialog.setMessage("Please Wait...");
                     progressDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
                     progressDialog.setProgressStyle(R.style.CustomDialogStyle);
                     progressDialog.setCancelable(false);
