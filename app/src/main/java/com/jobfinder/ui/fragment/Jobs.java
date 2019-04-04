@@ -284,7 +284,7 @@ public class Jobs extends BaseFragment implements JobsAdapter.JobsAdapterListene
         binding.btnSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String query = binding.etSearch.getText().toString();
+                String query = binding.etSearch.getText().toString().trim();
                 Utils.hideKeyboard(context);
                 prepareBaseURLAndFetchData(query);
 
