@@ -1,18 +1,23 @@
 package com.jobfinder.ui.fragment;
 
-import android.app.DownloadManager;
 import android.content.Intent;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RadioButton;
 import android.widget.Toast;
 
-import com.google.android.gms.common.api.Api;
+import com.google.android.gms.common.api.Status;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.internal.ei;
+import com.google.android.libraries.places.widget.Autocomplete;
+import com.google.android.libraries.places.widget.AutocompleteActivity;
+import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
+import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
+import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
 import com.jobfinder.R;
 import com.jobfinder.databinding.FragmentJobBind;
 import com.jobfinder.databinding.PopupSettingBind;
@@ -30,7 +35,9 @@ import com.jobfinder.utils.Utils;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -45,6 +52,7 @@ import retrofit2.Response;
 
 public class Jobs extends BaseFragment implements JobsAdapter.JobsAdapterListener {
 
+    private static final int AUTOCOMPLETE_REQUEST_CODE = 1002;
     FragmentJobBind binding;
     PopupSettingBind popupSettingBinding;
     AlertDialog dialog;
@@ -53,7 +61,6 @@ public class Jobs extends BaseFragment implements JobsAdapter.JobsAdapterListene
     JobsAdapter adapter;
     Double Lat, Lng;
     private static Location mLocation;
-    int API_CHECKED_INDEX, SORT_CHECKED_INDEX;
 
     public static Jobs newInstance() {
         Jobs jobs = new Jobs();
@@ -75,6 +82,11 @@ public class Jobs extends BaseFragment implements JobsAdapter.JobsAdapterListene
         binding.tolBarTitle.setText("Job Finder");
         setUpAdapter(new ArrayList<Job>());
         prepareBaseURLAndFetchData("");
+    }
+
+    private void startAutocompleteActivity() {
+        Intent autocompleteIntent = new Autocomplete.IntentBuilder(AutocompleteActivityMode.FULLSCREEN, Arrays.asList(Place.Field.ID, Place.Field.NAME)).build(context);
+        startActivityForResult(autocompleteIntent, AUTOCOMPLETE_REQUEST_CODE);
     }
 
     //method to get data from server as per filters if default filter value is git hub and sort is date.
@@ -291,6 +303,14 @@ public class Jobs extends BaseFragment implements JobsAdapter.JobsAdapterListene
             }
         });
 
+        binding.etSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (SharedPrefManager.getInstance().getString(Constants.SORT_TYPE, "").equalsIgnoreCase(Constants.DATE)) {
+                    startAutocompleteActivity();
+                }
+            }
+        });
 
     }
 
@@ -327,4 +347,21 @@ public class Jobs extends BaseFragment implements JobsAdapter.JobsAdapterListene
     public void onEvent_Location(Location location) {
         mLocation = location;
     }
+
+    //because auto complete data is back in here
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent intent) {
+        if (requestCode == AUTOCOMPLETE_REQUEST_CODE) {
+            if (resultCode == AutocompleteActivity.RESULT_OK) {
+                Place place = Autocomplete.getPlaceFromIntent(intent);
+                binding.etSearch.setText(place.getName());
+            } else if (resultCode == AutocompleteActivity.RESULT_ERROR) {
+                Status status = Autocomplete.getStatusFromIntent(intent);
+                //binding.etSearch.setText(status.getStatusMessage());
+            } else if (resultCode == AutocompleteActivity.RESULT_CANCELED) {
+                // The user canceled the operation.
+            }
+        }
+    }
+
 }

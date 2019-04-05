@@ -101,7 +101,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="0.5"
                 android:checked="false"
-                android:text="Date posted"
+                android:text="Place Name"
                 android:textSize="16sp" />
         </RadioGroup>
 

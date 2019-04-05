@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
 
+import com.google.android.libraries.places.api.model.Place;
 import com.google.gson.Gson;
 import com.jobfinder.R;
 
@@ -89,4 +90,11 @@ public class Utils {
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
+    public static String stringifyAutocompleteWidget(Place place) {
+        StringBuilder builder = new StringBuilder();
+
+
+        return builder.append(place.getName()).toString();
+
+    }
 }

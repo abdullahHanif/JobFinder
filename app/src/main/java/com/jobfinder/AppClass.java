@@ -5,15 +5,23 @@ import android.app.Application;
 import android.content.Context;
 import android.os.Bundle;
 
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.net.PlacesClient;
+
 public class AppClass extends Application {
     private static AppClass context;
     private static Activity activity;
+    private PlacesClient placesClient;
 
     @Override
     public void onCreate() {
         super.onCreate();
         context = this;
         registerLifeCycleActivity();
+        // Initialize Places.
+        Places.initialize(getApplicationContext(), "AIzaSyAVNXOGb0acJBWNprT2wET1X76bBdTAWF8");
+        // Create a new Places client instance.
+        placesClient = Places.createClient(this);
     }
 
     public static AppClass getContext() {
