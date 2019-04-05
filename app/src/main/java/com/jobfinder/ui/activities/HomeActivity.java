@@ -94,8 +94,6 @@ public class HomeActivity extends BaseActivity implements SavedJobs.SavedJobsLis
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
         //for location settings
         if (requestCode == Constants.REQUEST_CHECK_SETTINGS_CODE) {
             switch (resultCode) {
@@ -110,6 +108,7 @@ public class HomeActivity extends BaseActivity implements SavedJobs.SavedJobsLis
                     break;
             }
         }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Subscribe

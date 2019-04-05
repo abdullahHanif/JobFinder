@@ -84,11 +84,6 @@ public class Jobs extends BaseFragment implements JobsAdapter.JobsAdapterListene
         prepareBaseURLAndFetchData("");
     }
 
-    private void startAutocompleteActivity() {
-        Intent autocompleteIntent = new Autocomplete.IntentBuilder(AutocompleteActivityMode.FULLSCREEN, Arrays.asList(Place.Field.ID, Place.Field.NAME)).build(context);
-        startActivityForResult(autocompleteIntent, AUTOCOMPLETE_REQUEST_CODE);
-    }
-
     //method to get data from server as per filters if default filter value is git hub and sort is date.
     private void prepareBaseURLAndFetchData(String query) {
         binding.commonRecyclerView.setVisibility(View.GONE);
@@ -155,11 +150,11 @@ public class Jobs extends BaseFragment implements JobsAdapter.JobsAdapterListene
             case Constants.DATE:
                 //calling github url with query
                 if (!query.equalsIgnoreCase("") && local_api_provider.equalsIgnoreCase(Constants.GITHUB)) {
-                    getJobs(AppConfig.BASE_URL + "?description=" + query);
+                    getJobs(AppConfig.BASE_URL + "?location =" + query);
                 }
                 //calling Search.gov url with query
                 else if (!query.equalsIgnoreCase("") && local_api_provider.equalsIgnoreCase(Constants.SEARCH_GOV)) {
-                    getJobs(AppConfig.BASE_URL + "?query=" + query);
+                    getJobs(AppConfig.BASE_URL + "?Tags=" + query);
                 }
                 //Calling all available positions
                 else {
@@ -255,7 +250,6 @@ public class Jobs extends BaseFragment implements JobsAdapter.JobsAdapterListene
                             break;
                     }
                     //Setting filter types as user setting saved in persistence and will be retrieve when api is called.
-
                     switch (popupSettingBinding.rdoGroupSort.getCheckedRadioButtonId()) {
                         case R.id.rdoBtnLocation:
                             SharedPrefManager.getInstance().putString(Constants.SORT_TYPE, Constants.LOCATION);
@@ -306,7 +300,7 @@ public class Jobs extends BaseFragment implements JobsAdapter.JobsAdapterListene
         binding.etSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (SharedPrefManager.getInstance().getString(Constants.SORT_TYPE, "").equalsIgnoreCase(Constants.DATE)) {
+                if (!SharedPrefManager.getInstance().getString(Constants.SORT_TYPE, "").equalsIgnoreCase(Constants.LOCATION) ) {
                     startAutocompleteActivity();
                 }
             }
@@ -348,6 +342,11 @@ public class Jobs extends BaseFragment implements JobsAdapter.JobsAdapterListene
         mLocation = location;
     }
 
+    private void startAutocompleteActivity() {
+        Intent autocompleteIntent = new Autocomplete.IntentBuilder(AutocompleteActivityMode.FULLSCREEN, Arrays.asList(Place.Field.ID, Place.Field.NAME)).build(context);
+        startActivityForResult(autocompleteIntent, AUTOCOMPLETE_REQUEST_CODE);
+    }
+
     //because auto complete data is back in here
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent intent) {
@@ -362,6 +361,10 @@ public class Jobs extends BaseFragment implements JobsAdapter.JobsAdapterListene
                 // The user canceled the operation.
             }
         }
+        // Required because this class extends FragmentActivity
+        // which implements this method to pass onActivityResult calls to child fragments
+        // (eg AutocompleteFragment).
+        super.onActivityResult(requestCode, resultCode, intent);
     }
 
 }
