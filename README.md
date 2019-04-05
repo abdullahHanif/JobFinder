@@ -1,15 +1,18 @@
 Poject Details
 ===============
 -src
-	-Java
-		-Handler
-		-Model
-		-Network
-		-Services
-		-UI
-		-Utils
-	-Res
-	  -All Android Resources, Drawable, Mipmap and Values.
+
+-Java
+
+-Handler
+-Model
+-Network
+-Services
+-UI
+-Utils
+
+-Res
+-All Android Resources, Drawable, Mipmap and Values.
 
 1) Under Network App Config(API URLs) for API calls are located, and Retrofit Client is also there to handle all network operations.
 
